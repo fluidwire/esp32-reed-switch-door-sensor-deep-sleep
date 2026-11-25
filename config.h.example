@@ -1,0 +1,43 @@
+// config.h.example - copy this file to config.h and fill in your own values.
+// config.h is .gitignore'd so your secrets never leave your machine.
+
+#pragma once
+
+// --- WiFi -------------------------------------------------------------------
+#define WIFI_SSID      "your-wifi-ssid"
+#define WIFI_PASSWORD  "your-wifi-password"
+
+// --- MQTT broker ------------------------------------------------------------
+// A plain IP for the broker (e.g. "192.168.1.10") skips the DNS lookup and
+// shaves ~100 ms off every wake. Fine to leave a hostname for testing.
+#define MQTT_HOST       "broker.hivemq.com"
+#define MQTT_PORT       1883
+#define MQTT_CLIENT_ID  "fluidwire-door-1"
+#define MQTT_USER       ""        // leave blank for anonymous brokers
+#define MQTT_PASSWORD   ""
+
+// Event topic gets one JSON message per wake (not retained).
+// State topic gets a retained "open" / "closed" so late-joining dashboards
+// know the current state without waiting for the next event.
+#define MQTT_TOPIC_EVENT "fluidwire/demo/door/event"
+#define MQTT_TOPIC_STATE "fluidwire/demo/door/state"
+
+// --- Reed switch ------------------------------------------------------------
+// Most reed switches are NORMALLY OPEN: the contact closes when the magnet is
+// near, i.e. when the door is CLOSED, pulling GPIO33 LOW. Set DOOR_CLOSED_LEVEL
+// to HIGH if you have a normally-closed reed switch (or wired yours the other
+// way round) and the serial output reads inverted.
+#define DOOR_CLOSED_LEVEL LOW
+
+// --- Heartbeat --------------------------------------------------------------
+// Timer wake interval in seconds. Every heartbeat costs one WiFi connect
+// (~2 s awake, ~100 mA), so 3600 (hourly) is a sensible battery/visibility
+// trade-off. Set to 0 to disable and wake on the reed switch only.
+#define HEARTBEAT_SECONDS 3600
+
+// --- Battery sense ----------------------------------------------------------
+// Ratio = (R_top + R_bottom) / R_bottom of your divider into GPIO34.
+// 100k + 100k = 2.0 keeps a full 4.2 V LiPo at 2.1 V on the pin (ADC max ~3.1 V
+// at 12 dB attenuation). Measure your real resistors and put the exact ratio
+// here if you want +-0.02 V accuracy.
+#define BATT_DIVIDER_RATIO 2.0f
